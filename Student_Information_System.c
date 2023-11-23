@@ -2,6 +2,31 @@
 #include <stdlib.h>
 #include <string.h>
 
+//github codes - minimize nalang
+/*
+// view github branches
+git branch
+
+// adding your branch; name format: name_branch
+git branch -c "branch_name"
+
+//moving to a branch
+git checkout branch_name
+
+//check status
+git status
+
+//adding a file to branch
+git add "file_name" / git add .
+
+//committing code / finaled code to be uploaded
+git commit -m "note_here"
+
+//pushing branch code to github
+git push origin head
+
+*/
+
 // Structure for a student
 struct Student 
 {
@@ -12,6 +37,7 @@ struct Student
 
 //Prototype Functions 
 void addStudent(struct Student **head, int studentNumber);
+void displayStudents(struct Student *head);
 
 // admin authentication function
 int authenticateAdmin(char *adminName, char *adminPass);
@@ -145,8 +171,7 @@ void adminLogin()
                     break;
                 }
             case 2:
-                // Display students
-                // to be added
+                displayStudents(studentList);
                 break;
             case 0:
                 printf("\nLogging out...\n");
@@ -164,7 +189,7 @@ void adminLogin()
     }
 }
 
-// Add Student Functionality
+// (1) Add Student Functionality
 void addStudent(struct Student **head, int studentNumber)
 {
     // Creating new student node here
@@ -183,6 +208,21 @@ void addStudent(struct Student **head, int studentNumber)
 
     printf("\n Student No. %d has been successfully added!", studentNumber);
 }
+
+//(2) Display Information
+void displayStudents(struct Student *head)
+{
+    printf("\n=== STUDENT LIST ===\n");
+    printf("| %-15s | %-20s |\n", "Student ID", "Other Details");
+    printf("|-----------------|----------------------|\n");
+    while (head != NULL) 
+    {
+        printf("| %-15d | %-20s |\n", head->StudentNumber, "Add other details here");
+        // Add details dito other than student ID. e.g, name, courses.
+        head = head->next;
+    }
+}
+
 
 // Admin authentication
 int authenticateAdmin(char *adminName, char *adminPass)
