@@ -2,54 +2,42 @@
 #include <stdlib.h>
 #include <string.h>
 
-//github codes - minimize nalang
-/*
-// view github branches
-git branch
-
-// adding your branch; name format: name_branch
-git branch -c "branch_name"
-
-//moving to a branch
-git checkout branch_name
-
-//check status
-git status
-
-//adding a file to branch
-git add "file_name" / git add .
-
-//committing code / finaled code to be uploaded
-git commit -m "note_here"
-
-//pushing branch code to github
-git push origin head
-
-*/
+#define MAX_STRING_SIZE 50
+#define MAX_STUDENT_SIZE 20
 
 // Structure for a student
-struct Student 
+struct Student
 {
     int StudentNumber;
+    char firstName[MAX_STRING_SIZE];
+    char middleName[MAX_STRING_SIZE];
+    char lastName[MAX_STRING_SIZE];
+    int age;
+    int grade;
+    char email[MAX_STRING_SIZE];
+    char studentID[MAX_STRING_SIZE];
+    char birthDate[MAX_STRING_SIZE];
+    char sex[MAX_STRING_SIZE];
+    char course[MAX_STRING_SIZE];
+    char address[MAX_STRING_SIZE];
+    char city[MAX_STRING_SIZE];
+    char barangay[MAX_STRING_SIZE];
+    char streetNumber[MAX_STRING_SIZE];
     struct Student* next;
 };
 
+// Prototype Functions
+void addStudent(struct Student** head, int studentNumber);
+void displayStudents(struct Student* head);
+int authenticateAdmin(const char* adminName, const char* adminPass);
 
-//Prototype Functions 
-void addStudent(struct Student **head, int studentNumber);
-void displayStudents(struct Student *head);
-
-// admin authentication function
-int authenticateAdmin(char *adminName, char *adminPass);
-
-// ----- FUNCTIONS HERE -----
 // Main Menu Items
-int displayMenu(); //mainMenu
-void titleInfo();  //title 
-void userLogin();  //user login function
-void adminLogin(); //admin login prompt
+int displayMenu();
+void titleInfo();
+void userLogin();
+void adminLogin(struct Student** studentList);
 
-// === MAIN FUNCTION ===
+// Main Function
 int main()
 {
     int choice;
@@ -64,7 +52,7 @@ int main()
             userLogin();
             break;
         case 2:
-            adminLogin();
+            adminLogin(&studentList);
             break;
         default:
             printf("Invalid Input! Select [1] or [2]\n");
@@ -102,7 +90,7 @@ void titleInfo()
     printf("\n========================================");
 }
 
-// ===== USER PROMPT =====
+// USER PROMPT
 void userLogin()
 {
     int studentNumber;
@@ -115,12 +103,11 @@ void userLogin()
     scanf("%d", &studentNumber);
 }
 
-// ===== ADMIN PROMPT =====
-void adminLogin()
+// ADMIN PROMPT
+void adminLogin(struct Student** studentList)
 {
-    struct Student *studentList = NULL;
-    char adminName[20];
-    char adminPass[20];
+    char adminName[MAX_STRING_SIZE];
+    char adminPass[MAX_STRING_SIZE];
 
     // Admin username input
     printf("\n\t|-----------------------|");
@@ -128,20 +115,22 @@ void adminLogin()
     printf("\n\t| ENTER ADMIN USER NAME |");
     printf("\n\t|-----------------------|");
     printf("\n USER NAME: ");
-    scanf("%s", adminName);
+    fgets(adminName, sizeof(adminName), stdin);
+    adminName[strcspn(adminName, "\n")] = '\0'; // Remove newline character
 
     // Admin password input
     printf("\n\t|-----------------------|");
     printf("\n\t| ENTER ADMIN PASSWORD  |");
     printf("\n\t|-----------------------|");
     printf("\n PASSWORD : ");
-    scanf("%s", adminPass);
+    fgets(adminPass, sizeof(adminPass), stdin);
+    adminPass[strcspn(adminPass, "\n")] = '\0'; // Remove newline character
 
     // Authenticate Admin Login
     if (authenticateAdmin(adminName, adminPass))
     {
         printf("\nAuthentication Successful! Welcome, %s!\n", adminName);
-        
+
         int adminChoice;
 
         do
@@ -159,19 +148,10 @@ void adminLogin()
             switch (adminChoice)
             {
             case 1:
-                {
-                    int studentNumber;
-                    printf("\n\t|----------------------|");
-                    printf("\n\t|  --- ADD STUDENT --- |");
-                    printf("\n\t| ADD STUDENT NUMBER   |");
-                    printf("\n\t|----------------------|");
-                    printf("\n ENTER : ");
-                    scanf("%d", &studentNumber);
-                    addStudent(&studentList, studentNumber);
-                    break;
-                }
+                addStudent(studentList);
+                break;
             case 2:
-                displayStudents(studentList);
+                displayStudents(*studentList);
                 break;
             case 0:
                 printf("\nLogging out...\n");
@@ -189,10 +169,11 @@ void adminLogin()
     }
 }
 
-// (1) Add Student Functionality
-void addStudent(struct Student **head, int studentNumber)
+// Add Student Functionality
+void addStudent(struct Student** head, int studentNumber)
 {
-    // Creating new student node here
+    int i;
+    // Creating new student node
     struct Student* newStudent = (struct Student*)malloc(sizeof(struct Student));
 
     if (!newStudent)
@@ -204,32 +185,90 @@ void addStudent(struct Student **head, int studentNumber)
     newStudent->StudentNumber = studentNumber;
     newStudent->next = *head;
 
+    printf("Enter details for Student %d:\n", studentNumber);
+    printf("First Name: ");
+    fgets(newStudent->firstName, sizeof(newStudent->firstName), stdin);
+    newStudent->firstName[strcspn(newStudent->firstName, "\n")] = '\0'; // Remove newline character
+
+    printf("Middle Name: ");
+    fgets(newStudent->middleName, sizeof(newStudent->middleName), stdin);
+    newStudent->middleName[strcspn(newStudent->middleName, "\n")] = '\0';
+
+    printf("Last Name: ");
+    fgets(newStudent->lastName, sizeof(newStudent->lastName), stdin);
+    newStudent->lastName[strcspn(newStudent->lastName, "\n")] = '\0';
+
+    printf("Age: ");
+    scanf("%d", &newStudent->age);
+
+    printf("Grade: ");
+    scanf("%d", &newStudent->grade);
+
+    printf("Email: ");
+    fgets(newStudent->email, sizeof(newStudent->email), stdin);
+    newStudent->email[strcspn(newStudent->email, "\n")] = '\0';
+
+    printf("Student ID: ");
+    fgets(newStudent->studentID, sizeof(newStudent->studentID), stdin);
+    newStudent->studentID[strcspn(newStudent->studentID, "\n")] = '\0';
+
+    printf("Birth Date: ");
+    fgets(newStudent->birthDate, sizeof(newStudent->birthDate), stdin);
+    newStudent->birthDate[strcspn(newStudent->birthDate, "\n")] = '\0';
+
+    printf("Sex: ");
+    fgets(newStudent->sex, sizeof(newStudent->sex), stdin);
+    newStudent->sex[strcspn(newStudent->sex, "\n")] = '\0';
+
+    printf("Course: ");
+    fgets(newStudent->course, sizeof(newStudent->course), stdin);
+    newStudent->course[strcspn(newStudent->course, "\n")] = '\0';
+
+    printf("Address: ");
+    fgets(newStudent->address, sizeof(newStudent->address), stdin);
+    newStudent->address[strcspn(newStudent->address, "\n")] = '\0';
+
+    printf("City: ");
+    fgets(newStudent->city, sizeof(newStudent->city), stdin);
+    newStudent->city[strcspn(newStudent->city, "\n")] = '\0';
+
+    printf("Barangay: ");
+    fgets(newStudent->barangay, sizeof(newStudent->barangay), stdin);
+    newStudent->barangay[strcspn(newStudent->barangay, "\n")] = '\0';
+
+    printf("Street Number: ");
+    fgets(newStudent->streetNumber, sizeof(newStudent->streetNumber), stdin);
+    newStudent->streetNumber[strcspn(newStudent->streetNumber, "\n")] = '\0';
+
     *head = newStudent;
 
-    printf("\n Student No. %d has been successfully added!", studentNumber);
+    printf("\n Student No. %d has been successfully added!\n", studentNumber);
 }
 
-//(2) Display Information
-void displayStudents(struct Student *head)
+// Display Information
+void displayStudents(struct Student* head)
 {
     printf("\n=== STUDENT LIST ===\n");
     printf("| %-15s | %-20s |\n", "Student ID", "Other Details");
     printf("|-----------------|----------------------|\n");
-    while (head != NULL) 
+    while (head != NULL)
     {
         printf("| %-15d | %-20s |\n", head->StudentNumber, "Add other details here");
-        // Add details dito other than student ID. e.g, name, courses.
+        // Add details here other than student ID. e.g., name, courses.
+        printf("| %-15s | %-20s |\n", "Name", head->firstName);
+        printf("| %-15s | %-20d |\n", "Age", head->age);
+        printf("| %-15s | %-20d |\n", "Grade", head->grade);
+        // Add other fields in a similar fashion
         head = head->next;
     }
 }
 
-
 // Admin authentication
-int authenticateAdmin(char *adminName, char *adminPass)
+int authenticateAdmin(const char* adminName, const char* adminPass)
 {
     // Admin user name and password
-    const char *correctAdminName = "admin";
-    const char *correctAdminPass = "admin123";
+    const char* correctAdminName = "admin";
+    const char* correctAdminPass = "admin123";
 
     // Checking credentials
     if (strcmp(adminName, correctAdminName) == 0 && strcmp(adminPass, correctAdminPass) == 0)
