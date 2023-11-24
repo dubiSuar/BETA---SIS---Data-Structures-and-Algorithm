@@ -260,3 +260,4 @@ int authenticateAdmin(char* adminName, char* adminPass)
 
     return 0; // Authentication failed
 }
+
