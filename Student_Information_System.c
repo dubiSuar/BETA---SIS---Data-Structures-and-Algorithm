@@ -2,57 +2,37 @@
 #include <stdlib.h>
 #include <string.h>
 
-//github codes - minimize nalang
-/*
-// view github branches
-git branch
-
-// adding your branch; name format: name_branch
-git branch -c "branch_name"
-
-//moving to a branch
-git checkout branch_name
-
-//check status
-git status
-
-//adding a file to branch
-git add "file_name" / git add .
-
-//committing code / finaled code to be uploaded
-git commit -m "note_here"
-
-//pushing branch code to github
-git push origin head
-
-*/
-
-// Structure for a student
-struct Student 
+struct Student
 {
     int StudentNumber;
+    char firstName[50];
+    char middleName[50];
+    char lastName[50];
+    int age;
+    int grade;
+    char email[50];
+    char birthDate[20];
+    char sex[10];
+    char course[50];
+    char address[100];
     struct Student* next;
 };
 
+void addStudent(struct Student** head, int studentNumber);
+void displayStudents(struct Student* head);
+int authenticateAdmin(char* adminName, char* adminPass);
+void enterStudentDetails(struct Student* student);
+void displayStudentsInTable(struct Student* head);
 
-//Prototype Functions 
-void addStudent(struct Student **head, int studentNumber);
-void displayStudents(struct Student *head);
+int displayMenu();
+void titleInfo();
+void userLogin();
+void adminLogin();
 
-// admin authentication function
-int authenticateAdmin(char *adminName, char *adminPass);
-
-// ----- FUNCTIONS HERE -----
-// Main Menu Items
-int displayMenu(); //mainMenu
-void titleInfo();  //title 
-void userLogin();  //user login function
-void adminLogin(); //admin login prompt
-
-// === MAIN FUNCTION ===
 int main()
 {
     int choice;
+    struct Student* studentList = NULL;
 
     do
     {
@@ -64,7 +44,7 @@ int main()
             userLogin();
             break;
         case 2:
-            adminLogin();
+            adminLogin(&studentList);
             break;
         default:
             printf("Invalid Input! Select [1] or [2]\n");
@@ -77,7 +57,6 @@ int main()
     return 0;
 }
 
-// Main Menu Items
 int displayMenu()
 {
     int choice;
@@ -94,7 +73,6 @@ int displayMenu()
     return choice;
 }
 
-// TITLE
 void titleInfo()
 {
     printf("==========================================");
@@ -102,7 +80,6 @@ void titleInfo()
     printf("\n========================================");
 }
 
-// ===== USER PROMPT =====
 void userLogin()
 {
     int studentNumber;
@@ -115,14 +92,11 @@ void userLogin()
     scanf("%d", &studentNumber);
 }
 
-// ===== ADMIN PROMPT =====
-void adminLogin()
+void adminLogin(struct Student** studentList)
 {
-    struct Student *studentList = NULL;
     char adminName[20];
     char adminPass[20];
 
-    // Admin username input
     printf("\n\t|-----------------------|");
     printf("\n\t|  --- ADMIN LOGIN ---  |");
     printf("\n\t| ENTER ADMIN USER NAME |");
@@ -130,23 +104,20 @@ void adminLogin()
     printf("\n USER NAME: ");
     scanf("%s", adminName);
 
-    // Admin password input
     printf("\n\t|-----------------------|");
     printf("\n\t| ENTER ADMIN PASSWORD  |");
     printf("\n\t|-----------------------|");
     printf("\n PASSWORD : ");
     scanf("%s", adminPass);
 
-    // Authenticate Admin Login
     if (authenticateAdmin(adminName, adminPass))
     {
         printf("\nAuthentication Successful! Welcome, %s!\n", adminName);
-        
+
         int adminChoice;
 
         do
         {
-            // Admin menu
             printf("\n\t|-------------------------|");
             printf("\n\t|   ADMINISTRATOR MENU   |");
             printf("\n\t| [1] Add Student        |");
@@ -159,19 +130,19 @@ void adminLogin()
             switch (adminChoice)
             {
             case 1:
-                {
-                    int studentNumber;
-                    printf("\n\t|----------------------|");
-                    printf("\n\t|  --- ADD STUDENT --- |");
-                    printf("\n\t| ADD STUDENT NUMBER   |");
-                    printf("\n\t|----------------------|");
-                    printf("\n ENTER : ");
-                    scanf("%d", &studentNumber);
-                    addStudent(&studentList, studentNumber);
-                    break;
-                }
+            {
+                int studentNumber;
+                printf("\n\t|----------------------|");
+                printf("\n\t|  --- ADD STUDENT --- |");
+                printf("\n\t| ADD STUDENT NUMBER   |");
+                printf("\n\t|----------------------|");
+                printf("\n ENTER : ");
+                scanf("%d", &studentNumber);
+                addStudent(studentList, studentNumber);
+                break;
+            }
             case 2:
-                displayStudents(studentList);
+                displayStudentsInTable(*studentList);
                 break;
             case 0:
                 printf("\nLogging out...\n");
@@ -189,10 +160,8 @@ void adminLogin()
     }
 }
 
-// (1) Add Student Functionality
-void addStudent(struct Student **head, int studentNumber)
+void addStudent(struct Student** head, int studentNumber)
 {
-    // Creating new student node here
     struct Student* newStudent = (struct Student*)malloc(sizeof(struct Student));
 
     if (!newStudent)
@@ -204,38 +173,89 @@ void addStudent(struct Student **head, int studentNumber)
     newStudent->StudentNumber = studentNumber;
     newStudent->next = *head;
 
+    printf("\nEnter details for Student %d:\n", studentNumber);
+    enterStudentDetails(newStudent);
+
     *head = newStudent;
 
-    printf("\n Student No. %d has been successfully added!", studentNumber);
+    printf("\n Student No. %d has been successfully added!\n", studentNumber);
 }
 
-//(2) Display Information
-void displayStudents(struct Student *head)
+void enterStudentDetails(struct Student* student)
+{
+    printf("First Name: ");
+    scanf("%s", student->firstName);
+
+    fflush(stdin);
+
+    printf("Middle Name: ");
+    scanf("%s", student->middleName);
+
+    fflush(stdin);
+
+    printf("Last Name: ");
+    scanf("%s", student->lastName);
+
+    fflush(stdin);
+
+    printf("Age: ");
+    scanf("%d", &student->age);
+
+    fflush(stdin);
+
+    printf("Grade: ");
+    scanf("%d", &student->grade);
+
+    fflush(stdin);
+
+    printf("Email: ");
+    scanf("%s", student->email);
+
+    fflush(stdin);
+
+    printf("Birth Date: ");
+    scanf("%s", student->birthDate);
+
+    fflush(stdin);
+
+    printf("Sex: ");
+    scanf("%s", student->sex);
+
+    fflush(stdin);
+
+    printf("Course: ");
+    scanf("%s", student->course);
+
+    fflush(stdin);
+
+    printf("Address: ");
+    scanf("%s", student->address);
+
+    fflush(stdin);
+}
+
+void displayStudentsInTable(struct Student* head)
 {
     printf("\n=== STUDENT LIST ===\n");
-    printf("| %-15s | %-20s |\n", "Student ID", "Other Details");
-    printf("|-----------------|----------------------|\n");
-    while (head != NULL) 
+    printf("| %-15s | %-20s | %-15s | %-10s | %-50s |\n", "Student ID", "Name", "Age", "Grade", "Email");
+    printf("|-----------------|--------------------------------------------------|---------------|------------|-------------------|\n");
+    while (head != NULL)
     {
-        printf("| %-15d | %-20s |\n", head->StudentNumber, "Add other details here");
-        // Add details dito other than student ID. e.g, name, courses.
+        printf("| %-15d | %-5s %s %s | %-15d | %-10d | %-50s |\n", head->StudentNumber, head->firstName, head->middleName, head->lastName, head->age, head->grade, head->email);
         head = head->next;
     }
 }
 
 
-// Admin authentication
-int authenticateAdmin(char *adminName, char *adminPass)
+int authenticateAdmin(char* adminName, char* adminPass)
 {
-    // Admin user name and password
-    const char *correctAdminName = "admin";
-    const char *correctAdminPass = "admin123";
+    const char* correctAdminName = "admin";
+    const char* correctAdminPass = "admin123";
 
-    // Checking credentials
     if (strcmp(adminName, correctAdminName) == 0 && strcmp(adminPass, correctAdminPass) == 0)
     {
-        return 1; // Authentication successful
+        return 1;
     }
 
-    return 0; // Authentication failed
+    return 0;
 }
