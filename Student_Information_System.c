@@ -15,9 +15,14 @@ struct Student
     char sex[10];
     char course[50];
     char address[100];
+    // Additional fields for address
+    char barangay[50];
+    char city[50];
+    char streetNumber[50];
     struct Student* next;
 };
 
+// Function prototypes
 void addStudent(struct Student** head, int studentNumber);
 void displayStudents(struct Student* head);
 int authenticateAdmin(char* adminName, char* adminPass);
@@ -25,6 +30,7 @@ void enterStudentDetails(struct Student* student);
 void displayStudentsInTable(struct Student* head);
 void searchStudent(struct Student* head, int studentNumber);
 
+// Other function prototypes
 int displayMenu();
 void titleInfo();
 void userLogin();
@@ -143,6 +149,18 @@ void adminLogin(struct Student** studentList)
                 addStudent(studentList, studentNumber);
                 break;
             }
+            case 3:
+            {
+                int studentNumber;
+                printf("\n\t|-------------------------|");
+                printf("\n\t|   SEARCH STUDENT        |");
+                printf("\n\t| Enter Student Number    |");
+                printf("\n\t|-------------------------|");  
+                printf("\n STUDENT TO BE SEARCHED : ");
+                scanf("%d", &studentNumber);
+                searchStudent(*studentList, studentNumber);
+                break;
+            }
             case 2:
                 displayStudentsInTable(*studentList);
                 break;
@@ -182,8 +200,6 @@ void addStudent(struct Student** head, int studentNumber)
 
     printf("\n Student No. %d has been successfully added!\n", studentNumber);
 }
-
-
 
 void enterStudentDetails(struct Student* student)
 {
@@ -236,8 +252,68 @@ void enterStudentDetails(struct Student* student)
     scanf("%s", student->address);
 
     fflush(stdin);
+
+    printf("Barangay: ");
+    scanf("%s", student->barangay);
+
+    fflush(stdin);
+
+    printf("City: ");
+    scanf("%s", student->city);
+
+    fflush(stdin);
+
+    printf("Street Number: ");
+    scanf("%s", student->streetNumber);
+
+    fflush(stdin);
 }
 
+void searchStudent(struct Student* head, int studentNumber)
+{
+    struct Student* foundStudent = NULL;
+
+    // Search for the student
+    while (head != NULL)
+    {
+        if (head->StudentNumber == studentNumber)
+        {
+            foundStudent = head;
+            break;
+        }
+        head = head->next;
+    }
+
+    if (foundStudent != NULL)
+    {
+        // Display student details in a table format
+        printf("\n=== SEARCHED STUDENT DETAILS ===\n");
+        printf("| %-15s | %-30s | %-5s | %-5s | %-30s |\n", "Student ID", "Name", "Age", "Grade", "Email");
+        printf("|-----------------|--------------------------------|-------|-------|--------------------------------|\n");
+
+        char nameBuffer[150];  // Buffer for concatenated name
+        strcpy(nameBuffer, foundStudent->firstName);
+        strcat(nameBuffer, " ");
+        strcat(nameBuffer, foundStudent->middleName);
+        strcat(nameBuffer, " ");
+        strcat(nameBuffer, foundStudent->lastName);
+
+        char emailBuffer[50];  // Buffer for email
+        strcpy(emailBuffer, foundStudent->email);
+
+        printf("| %-15d | %-30s | %-5d | %-5d | %-30s |\n",
+               foundStudent->StudentNumber,
+               nameBuffer,
+               foundStudent->age,
+               foundStudent->grade,
+               emailBuffer);
+    }
+    else
+    {
+        // If the loop completes, the student was not found
+        printf("\nStudent with ID %d not found.\n", studentNumber);
+    }
+}
 
 void displayStudentsInTable(struct Student* head)
 {
@@ -247,7 +323,7 @@ void displayStudentsInTable(struct Student* head)
 
     while (head != NULL)
     {
-        printf("| %-15d | %-30s | %-5d | %-5d | %-30s |\n",
+        printf("| %-15d | %-30s | %-5d - | %-5d | %-30s |\n",
                head->StudentNumber,
                strcat(strcat(strcat(head->firstName, " "), head->middleName), head->lastName),
                head->age,
@@ -256,7 +332,6 @@ void displayStudentsInTable(struct Student* head)
         head = head->next;
     }
 }
-
 
 int authenticateAdmin(char* adminName, char* adminPass)
 {
