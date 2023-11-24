@@ -2,52 +2,40 @@
 #include <stdlib.h>
 #include <string.h>
 
-//github codes - minimize nalang
-/*
-// view github branches
-git branch
-
-// adding your branch; name format: name_branch
-git branch -c "branch_name"
-
-//moving to a branch
-git checkout branch_name
-
-//check status
-git status
-
-//adding a file to branch
-git add "file_name" / git add .
-
-//committing code / finaled code to be uploaded
-git commit -m "note_here"
-
-//pushing branch code to github
-git push origin head
-
-*/
-
 // Structure for a student
 struct Student 
 {
     int StudentNumber;
+    char firstName[50];
+    char middleName[50];
+    char lastName[50];
+    int age;
+    int grade;
+    char email[50];
+    char studentID[20];
+    char birthDate[20];
+    char sex[10];
+    char course[50];
+    char address[100];
+    char city[50];
+    char barangay[50];
+    char streetNumber[20];
     struct Student* next;
 };
 
+// Prototype Functions 
+void addStudent(struct Student** head, int studentNumber);
+void displayStudents(struct Student* head);
 
-//Prototype Functions 
-void addStudent(struct Student **head, int studentNumber);
-void displayStudents(struct Student *head);
-
-// admin authentication function
-int authenticateAdmin(char *adminName, char *adminPass);
+// Admin authentication function
+int authenticateAdmin(char* adminName, char* adminPass);
 
 // ----- FUNCTIONS HERE -----
 // Main Menu Items
-int displayMenu(); //mainMenu
-void titleInfo();  //title 
-void userLogin();  //user login function
-void adminLogin(); //admin login prompt
+int displayMenu(); // mainMenu
+void titleInfo();  // title 
+void userLogin();  // user login function
+void adminLogin(); // admin login prompt
 
 // === MAIN FUNCTION ===
 int main()
@@ -118,7 +106,7 @@ void userLogin()
 // ===== ADMIN PROMPT =====
 void adminLogin()
 {
-    struct Student *studentList = NULL;
+    struct Student* studentList = NULL;
     char adminName[20];
     char adminPass[20];
 
@@ -140,8 +128,8 @@ void adminLogin()
     // Authenticate Admin Login
     if (authenticateAdmin(adminName, adminPass))
     {
-        printf("\nAuthentication Successful! Welcome, %s!\n", adminName);
-        
+        printf("\nAuthentication Successful! Welcome, %s!\n");
+
         int adminChoice;
 
         do
@@ -159,17 +147,17 @@ void adminLogin()
             switch (adminChoice)
             {
             case 1:
-                {
-                    int studentNumber;
-                    printf("\n\t|----------------------|");
-                    printf("\n\t|  --- ADD STUDENT --- |");
-                    printf("\n\t| ADD STUDENT NUMBER   |");
-                    printf("\n\t|----------------------|");
-                    printf("\n ENTER : ");
-                    scanf("%d", &studentNumber);
-                    addStudent(&studentList, studentNumber);
-                    break;
-                }
+            {
+                int studentNumber;
+                printf("\n\t|----------------------|");
+                printf("\n\t|  --- ADD STUDENT --- |");
+                printf("\n\t| ADD STUDENT NUMBER   |");
+                printf("\n\t|----------------------|");
+                printf("\n ENTER : ");
+                scanf("%d", &studentNumber);
+                addStudent(&studentList, studentNumber);
+                break;
+            }
             case 2:
                 displayStudents(studentList);
                 break;
@@ -190,7 +178,7 @@ void adminLogin()
 }
 
 // (1) Add Student Functionality
-void addStudent(struct Student **head, int studentNumber)
+void addStudent(struct Student** head, int studentNumber)
 {
     // Creating new student node here
     struct Student* newStudent = (struct Student*)malloc(sizeof(struct Student));
@@ -204,32 +192,65 @@ void addStudent(struct Student **head, int studentNumber)
     newStudent->StudentNumber = studentNumber;
     newStudent->next = *head;
 
+    printf("Enter details for Student %d:\n", studentNumber);
+    printf("First Name: ");
+    scanf("%s", newStudent->firstName);
+    printf("Middle Name: ");
+    scanf("%s", newStudent->middleName);
+    printf("Last Name: ");
+    scanf("%s", newStudent->lastName);
+    printf("Age: ");
+    scanf("%d", &newStudent->age);
+    printf("Grade: ");
+    scanf("%d", &newStudent->grade);
+    printf("Email: ");
+    scanf("%s", newStudent->email);
+    printf("Student ID: ");
+    scanf("%s", newStudent->studentID);
+    printf("Birth Date: ");
+    scanf("%s", newStudent->birthDate);
+    printf("Sex: ");
+    scanf("%s", newStudent->sex);
+    printf("Course: ");
+    scanf("%s", newStudent->course);
+    printf("Address: ");
+    scanf("%s", newStudent->address);
+    printf("City: ");
+    scanf("%s", newStudent->city);
+    printf("Barangay: ");
+    scanf("%s", newStudent->barangay);
+    printf("Street Number: ");
+    scanf("%s", newStudent->streetNumber);
+
     *head = newStudent;
 
-    printf("\n Student No. %d has been successfully added!", studentNumber);
+    printf("\n Student No. %d has been successfully added!\n", studentNumber);
 }
 
-//(2) Display Information
-void displayStudents(struct Student *head)
+// (2) Display Information
+void displayStudents(struct Student* head)
 {
     printf("\n=== STUDENT LIST ===\n");
     printf("| %-15s | %-20s |\n", "Student ID", "Other Details");
     printf("|-----------------|----------------------|\n");
-    while (head != NULL) 
+    while (head != NULL)
     {
         printf("| %-15d | %-20s |\n", head->StudentNumber, "Add other details here");
-        // Add details dito other than student ID. e.g, name, courses.
+        // Add details here other than student ID. e.g, name, courses.
+        printf("| %-15s | %-20s |\n", "Name", head->firstName);
+        printf("| %-15s | %-20s |\n", "Age", head->age);
+        printf("| %-15s | %-20s |\n", "Grade", head->grade);
+        // Add other fields in a similar fashion
         head = head->next;
     }
 }
 
-
 // Admin authentication
-int authenticateAdmin(char *adminName, char *adminPass)
+int authenticateAdmin(char* adminName, char* adminPass)
 {
     // Admin user name and password
-    const char *correctAdminName = "admin";
-    const char *correctAdminPass = "admin123";
+    const char* correctAdminName = "admin";
+    const char* correctAdminPass = "admin123";
 
     // Checking credentials
     if (strcmp(adminName, correctAdminName) == 0 && strcmp(adminPass, correctAdminPass) == 0)
