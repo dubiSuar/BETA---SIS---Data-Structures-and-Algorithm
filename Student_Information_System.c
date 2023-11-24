@@ -23,6 +23,7 @@ void displayStudents(struct Student* head);
 int authenticateAdmin(char* adminName, char* adminPass);
 void enterStudentDetails(struct Student* student);
 void displayStudentsInTable(struct Student* head);
+void searchStudent(struct Student* head, int studentNumber);
 
 int displayMenu();
 void titleInfo();
@@ -122,6 +123,7 @@ void adminLogin(struct Student** studentList)
             printf("\n\t|   ADMINISTRATOR MENU   |");
             printf("\n\t| [1] Add Student        |");
             printf("\n\t| [2] Display Students   |");
+            printf("\n\t| [3] Search Student     |");
             printf("\n\t| [0] Logout             |");
             printf("\n\t|-------------------------|");
             printf("\n SELECT: ");
@@ -181,6 +183,8 @@ void addStudent(struct Student** head, int studentNumber)
     printf("\n Student No. %d has been successfully added!\n", studentNumber);
 }
 
+
+
 void enterStudentDetails(struct Student* student)
 {
     printf("First Name: ");
@@ -234,14 +238,21 @@ void enterStudentDetails(struct Student* student)
     fflush(stdin);
 }
 
+
 void displayStudentsInTable(struct Student* head)
 {
     printf("\n=== STUDENT LIST ===\n");
-    printf("| %-15s | %-20s | %-15s | %-10s | %-50s |\n", "Student ID", "Name", "Age", "Grade", "Email");
-    printf("|-----------------|--------------------------------------------------|---------------|------------|-------------------|\n");
+    printf("| %-15s | %-30s | %-5s | %-5s | %-30s |\n", "Student ID", "Name", "Age", "Grade", "Email");
+    printf("|-----------------|--------------------------------|-------|-------|--------------------------------|\n");
+
     while (head != NULL)
     {
-        printf("| %-15d | %-5s %s %s | %-15d | %-10d | %-50s |\n", head->StudentNumber, head->firstName, head->middleName, head->lastName, head->age, head->grade, head->email);
+        printf("| %-15d | %-30s | %-5d | %-5d | %-30s |\n",
+               head->StudentNumber,
+               strcat(strcat(strcat(head->firstName, " "), head->middleName), head->lastName),
+               head->age,
+               head->grade,
+               head->email);
         head = head->next;
     }
 }
