@@ -205,68 +205,44 @@ void enterStudentDetails(struct Student* student)
 {
     printf("First Name: ");
     scanf("%s", student->firstName);
-
-    fflush(stdin);
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
 
     printf("Middle Name: ");
     scanf("%s", student->middleName);
-
-    fflush(stdin);
+    while ((c = getchar()) != '\n' && c != EOF);
 
     printf("Last Name: ");
     scanf("%s", student->lastName);
-
-    fflush(stdin);
+    while ((c = getchar()) != '\n' && c != EOF);
 
     printf("Age: ");
     scanf("%d", &student->age);
-
-    fflush(stdin);
+    while ((c = getchar()) != '\n' && c != EOF);
 
     printf("Grade: ");
     scanf("%d", &student->grade);
-
-    fflush(stdin);
+    while ((c = getchar()) != '\n' && c != EOF);
 
     printf("Email: ");
     scanf("%s", student->email);
-
-    fflush(stdin);
+    while ((c = getchar()) != '\n' && c != EOF);
 
     printf("Birth Date: ");
     scanf("%s", student->birthDate);
-
-    fflush(stdin);
+    while ((c = getchar()) != '\n' && c != EOF);
 
     printf("Sex: ");
     scanf("%s", student->sex);
-
-    fflush(stdin);
+    while ((c = getchar()) != '\n' && c != EOF);
 
     printf("Course: ");
     scanf("%s", student->course);
-
-    fflush(stdin);
+    while ((c = getchar()) != '\n' && c != EOF);
 
     printf("Address: ");
     scanf("%s", student->address);
-
-    fflush(stdin);
-
-    printf("Barangay: ");
-    scanf("%s", student->barangay);
-
-    fflush(stdin);
-
-    printf("City: ");
-    scanf("%s", student->city);
-
-    fflush(stdin);
-
-    printf("Street Number: ");
-    scanf("%s", student->streetNumber);
-
-    fflush(stdin);
+    while ((c = getchar()) != '\n' && c != EOF);
 }
 
 void searchStudent(struct Student* head, int studentNumber)
@@ -323,12 +299,23 @@ void displayStudentsInTable(struct Student* head)
 
     while (head != NULL)
     {
-        printf("| %-15d | %-30s | %-5d - | %-5d | %-30s |\n",
+        // Use temporary buffers for concatenation
+        char fullName[150];
+        strcpy(fullName, head->firstName);
+        strcat(fullName, " ");
+        strcat(fullName, head->middleName);
+        strcat(fullName, " ");
+        strcat(fullName, head->lastName);
+
+        char emailBuffer[50];
+        strcpy(emailBuffer, head->email);
+
+        printf("| %-15d | %-30s | %-5d | %-5d | %-30s |\n",
                head->StudentNumber,
-               strcat(strcat(strcat(head->firstName, " "), head->middleName), head->lastName),
+               fullName,
                head->age,
                head->grade,
-               head->email);
+               emailBuffer);
         head = head->next;
     }
 }
