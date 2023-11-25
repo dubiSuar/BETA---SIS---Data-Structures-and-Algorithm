@@ -53,6 +53,8 @@ int main()
         case 2:
             adminLogin(&studentList);
             break;
+        case 0:
+            printf("Logging Out.....");
         default:
             printf("Invalid Input! Select [1] or [2]\n");
             break;
@@ -73,6 +75,7 @@ int displayMenu()
     printf("\n\t| Select Login :       |");
     printf("\n\t| [1] USER             |");
     printf("\n\t| [2] ADMINISTRATOR    |");
+    printf("\n\t| [0] LOGOUT           |");
     printf("\n\t|----------------------|");
     printf("\n SELECT: ");
     scanf("%d", &choice);
@@ -93,6 +96,7 @@ void userLogin()
 
     printf("\n\t|----------------------|");
     printf("\n\t|--- STUDENT LOGIN --- |");
+    printf("\n\t|------------------------|");
     printf("\n\t| ENTER STUDENT NUMBER |");
     printf("\n\t|----------------------|");
     printf("\n ENTER: ");
@@ -106,6 +110,7 @@ void adminLogin(struct Student** studentList)
 
     printf("\n\t|-----------------------|");
     printf("\n\t|  --- ADMIN LOGIN ---  |");
+    printf("\n\t|------------------------|");
     printf("\n\t| ENTER ADMIN USER NAME |");
     printf("\n\t|-----------------------|");
     printf("\n USER NAME: ");
@@ -125,13 +130,14 @@ void adminLogin(struct Student** studentList)
 
         do
         {
-            printf("\n\t|-------------------------|");
+            printf("\n\t|------------------------|");
             printf("\n\t|   ADMINISTRATOR MENU   |");
+            printf("\n\t|------------------------|");
             printf("\n\t| [1] Add Student        |");
             printf("\n\t| [2] Display Students   |");
             printf("\n\t| [3] Search Student     |");
             printf("\n\t| [0] Logout             |");
-            printf("\n\t|-------------------------|");
+            printf("\n\t|------------------------|");
             printf("\n SELECT: ");
             scanf("%d", &adminChoice);
 
@@ -142,6 +148,7 @@ void adminLogin(struct Student** studentList)
                 int studentNumber;
                 printf("\n\t|----------------------|");
                 printf("\n\t|  --- ADD STUDENT --- |");
+                printf("\n\t|------------------------|");
                 printf("\n\t| ADD STUDENT NUMBER   |");
                 printf("\n\t|----------------------|");
                 printf("\n ENTER : ");
@@ -154,6 +161,7 @@ void adminLogin(struct Student** studentList)
                 int studentNumber;
                 printf("\n\t|-------------------------|");
                 printf("\n\t|   SEARCH STUDENT        |");
+                printf("\n\t|------------------------|");
                 printf("\n\t| Enter Student Number    |");
                 printf("\n\t|-------------------------|");  
                 printf("\n STUDENT TO BE SEARCHED : ");
@@ -249,7 +257,7 @@ void searchStudent(struct Student* head, int studentNumber)
 {
     struct Student* foundStudent = NULL;
 
-    // Search for the student
+    // Search for the student number rito
     while (head != NULL)
     {
         if (head->StudentNumber == studentNumber)
@@ -262,7 +270,8 @@ void searchStudent(struct Student* head, int studentNumber)
 
     if (foundStudent != NULL)
     {
-        // Display student details in a table format
+        // Display students
+        //okay na rito pantay na table
         printf("\n=== SEARCHED STUDENT DETAILS ===\n");
         printf("| %-15s | %-30s | %-5s | %-5s | %-30s |\n", "Student ID", "Name", "Age", "Grade", "Email");
         printf("|-----------------|--------------------------------|-------|-------|--------------------------------|\n");
@@ -286,7 +295,7 @@ void searchStudent(struct Student* head, int studentNumber)
     }
     else
     {
-        // If the loop completes, the student was not found
+        // Printf student not found  - error trapping i2
         printf("\nStudent with ID %d not found.\n", studentNumber);
     }
 }
@@ -299,7 +308,10 @@ void displayStudentsInTable(struct Student* head)
 
     while (head != NULL)
     {
-        // Use temporary buffers for concatenation
+        /*
+        Temporary buffers for concatentation
+        To study nalang 'to push 'ko na file sa github
+        */
         char fullName[150];
         strcpy(fullName, head->firstName);
         strcat(fullName, " ");
@@ -322,6 +334,7 @@ void displayStudentsInTable(struct Student* head)
 
 int authenticateAdmin(char* adminName, char* adminPass)
 {
+    //default admin username & password 
     const char* correctAdminName = "admin";
     const char* correctAdminPass = "admin123";
 
