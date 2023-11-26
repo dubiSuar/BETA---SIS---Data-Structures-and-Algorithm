@@ -2,23 +2,24 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX_STRING_LENGTH 50
+
 struct Student
 {
     int StudentNumber;
-    char firstName[50];
-    char middleName[50];
-    char lastName[50];
+    char firstName[MAX_STRING_LENGTH];
+    char middleName[MAX_STRING_LENGTH];
+    char lastName[MAX_STRING_LENGTH];
     int age;
     int grade;
-    char email[50];
-    char birthDate[20];
-    char sex[10];
-    char course[50];
-    char address[100];
-    // Additional fields for address
-    char barangay[50];
-    char city[50];
-    char streetNumber[50];
+    char email[MAX_STRING_LENGTH];
+    char birthDate[MAX_STRING_LENGTH];
+    char sex[MAX_STRING_LENGTH];
+    char course[MAX_STRING_LENGTH];
+    char address[MAX_STRING_LENGTH];
+    char barangay[MAX_STRING_LENGTH];
+    char city[MAX_STRING_LENGTH];
+    char streetNumber[MAX_STRING_LENGTH];
     struct Student* next;
 };
 
@@ -29,6 +30,8 @@ int authenticateAdmin(char* adminName, char* adminPass);
 void enterStudentDetails(struct Student* student);
 void displayStudentsInTable(struct Student* head);
 void searchStudent(struct Student* head, int studentNumber);
+void modifyStudent(struct Student** head, int studentNumber);
+
 
 // Other function prototypes
 int displayMenu();
@@ -56,12 +59,12 @@ int main()
         case 0:
             printf("Logging Out.....");
         default:
-            printf("Invalid Input! Select [1] or [2]\n");
+            printf("Logout Out Successful!\n");
             break;
         }
     } while (choice != 0);
 
-    printf("Program has Terminated Successfully!\n");
+    printf("\n ----- Program has Terminated Successfully! ----- \n");
 
     return 0;
 }
@@ -130,14 +133,15 @@ void adminLogin(struct Student** studentList)
 
         do
         {
-            printf("\n\t|------------------------|");
-            printf("\n\t|   ADMINISTRATOR MENU   |");
-            printf("\n\t|------------------------|");
-            printf("\n\t| [1] Add Student        |");
-            printf("\n\t| [2] Display Students   |");
-            printf("\n\t| [3] Search Student     |");
-            printf("\n\t| [0] Logout             |");
-            printf("\n\t|------------------------|");
+            printf("\n\t|--------------------------|");
+            printf("\n\t|    ADMINISTRATOR MENU    |");
+            printf("\n\t|--------------------------|");
+            printf("\n\t| [1] Add Student          |");
+            printf("\n\t| [2] Display Students     |");
+            printf("\n\t| [3] Search Student       |");
+            printf("\n\t| [4] Modify Student Record|");
+            printf("\n\t| [0] Logout               |");
+            printf("\n\t|--------------------------|");
             printf("\n SELECT: ");
             scanf("%d", &adminChoice);
 
@@ -156,6 +160,9 @@ void adminLogin(struct Student** studentList)
                 addStudent(studentList, studentNumber);
                 break;
             }
+            case 2:
+                displayStudentsInTable(*studentList);
+                break;
             case 3:
             {
                 int studentNumber;
@@ -169,9 +176,18 @@ void adminLogin(struct Student** studentList)
                 searchStudent(*studentList, studentNumber);
                 break;
             }
-            case 2:
-                displayStudentsInTable(*studentList);
-                break;
+            case 4:
+                {
+                    int modifyStudentNumber;
+                    printf("\n\t|-----------------------|");
+                    printf("\n\t| --- MODIFY STUDENT ---|");
+                    printf("\n\t| ENTER STUDENT NUMBER  |");
+                    printf("\n\t|-----------------------|");
+                    printf("\n ENTER : ");
+                    scanf("%d", &modifyStudentNumber);
+                    modifyStudent(studentList, modifyStudentNumber);
+                    break;
+                }
             case 0:
                 printf("\nLogging out...\n");
                 break;
@@ -303,14 +319,13 @@ void searchStudent(struct Student* head, int studentNumber)
 void displayStudentsInTable(struct Student* head)
 {
     printf("\n=== STUDENT LIST ===\n");
-    printf("| %-15s | %-30s | %-5s | %-5s | %-30s |\n", "Student ID", "Name", "Age", "Grade", "Email");
-    printf("|-----------------|--------------------------------|-------|-------|--------------------------------|\n");
+    printf("| %-15s | %-30s | %-5s | %-5s | %-30s | %-30s |\n", "Student ID", "Name", "Age", "Grade", "Email", "Address");
+    printf("|-----------------|--------------------------------|-------|-------|--------------------------------|--------------------------------|\n");
 
     while (head != NULL)
     {
         /*
-        Temporary buffers for concatentation
-        To study nalang 'to push 'ko na file sa github
+        Temporary buffers for concatenation
         */
         char fullName[150];
         strcpy(fullName, head->firstName);
@@ -322,15 +337,99 @@ void displayStudentsInTable(struct Student* head)
         char emailBuffer[50];
         strcpy(emailBuffer, head->email);
 
-        printf("| %-15d | %-30s | %-5d | %-5d | %-30s |\n",
+        printf("| %-15d | %-30s | %-5d | %-5d | %-30s | %-30s |\n",
                head->StudentNumber,
                fullName,
                head->age,
                head->grade,
-               emailBuffer);
+               emailBuffer,
+               head->address);
+
         head = head->next;
     }
 }
+
+//TO FIX: SKIPPING LINES
+void modifyStudent(struct Student** head, int studentNumber)
+{
+    struct Student* current = *head;
+
+    while (current != NULL)
+    {
+        if (current->StudentNumber == studentNumber)
+        {
+            printf("\n=== MODIFY STUDENT ===\n");
+            printf("| %-20s | %-40s |\n", "Field", "Current Value");
+            printf("|----------------------|------------------------------------------|\n");
+            printf("| %-20s | %-40d |\n", "Student ID", current->StudentNumber);
+            printf("| %-20s | %-40s |\n", "Current First Name", current->firstName);
+            printf("| %-20s | %-40s |\n", "Current Middle Name", current->middleName);
+            printf("| %-20s | %-40s |\n", "Current Last Name", current->lastName);
+            printf("| %-20s | %-40d |\n", "Current Age", current->age);
+            printf("| %-20s | %-40d |\n", "Current Grade", current->grade);
+            printf("| %-20s | %-40s |\n", "Current Email", current->email);
+            printf("| %-20s | %-40s |\n", "Current Birth Date", current->birthDate);
+            printf("| %-20s | %-40s |\n", "Current Sex", current->sex);
+            printf("| %-20s | %-40s |\n", "Current Course", current->course);
+            printf("| %-20s | %-40s |\n", "Current Address", current->address);
+            printf("|----------------------|------------------------------------------|\n");
+
+            // Clear input buffer after reading integers
+            int c;
+            while ((c = getchar()) != '\n' && c != EOF);
+
+            // Get new values
+            printf("Enter New First Name: ");
+            fgets(current->firstName, sizeof(current->firstName), stdin);
+            current->firstName[strcspn(current->firstName, "\n")] = '\0';  // Remove trailing newline
+
+            printf("Enter New Middle Name: ");
+            fgets(current->middleName, sizeof(current->middleName), stdin);
+            current->middleName[strcspn(current->middleName, "\n")] = '\0';
+
+            printf("Enter New Last Name: ");
+            fgets(current->lastName, sizeof(current->lastName), stdin);
+            current->lastName[strcspn(current->lastName, "\n")] = '\0';
+
+            printf("Enter New Age: ");
+            scanf("%d", &current->age);
+
+            printf("Enter New Grade: ");
+            scanf("%d", &current->grade);
+
+            // Clear input buffer after reading integers
+            while ((c = getchar()) != '\n' && c != EOF);
+
+            printf("Enter New Email: ");
+            fgets(current->email, sizeof(current->email), stdin);
+            current->email[strcspn(current->email, "\n")] = '\0';
+
+            printf("Enter New Birth Date: ");
+            fgets(current->birthDate, sizeof(current->birthDate), stdin);
+            current->birthDate[strcspn(current->birthDate, "\n")] = '\0';
+
+            printf("Enter New Sex: ");
+            fgets(current->sex, sizeof(current->sex), stdin);
+            current->sex[strcspn(current->sex, "\n")] = '\0';
+
+            printf("Enter New Course: ");
+            fgets(current->course, sizeof(current->course), stdin);
+            current->course[strcspn(current->course, "\n")] = '\0';
+
+            printf("Enter New Address: ");
+            fgets(current->address, sizeof(current->address), stdin);
+            current->address[strcspn(current->address, "\n")] = '\0';
+
+            printf("\nStudent information updated successfully!\n");
+            return;
+        }
+        current = current->next;
+    }
+
+    // If the loop completes, the student was not found
+    printf("\nStudent with ID %d not found.\n", studentNumber);
+}
+
 
 int authenticateAdmin(char* adminName, char* adminPass)
 {
