@@ -23,7 +23,7 @@ struct Student
     struct Student* next;
 };
 
-// Function prototypes
+// Functions input and output
 void addStudent(struct Student** head, int studentNumber);
 void displayStudents(struct Student* head);
 int authenticateAdmin(char* adminName, char* adminPass);
@@ -32,12 +32,15 @@ void displayStudentsInTable(struct Student* head);
 void searchStudent(struct Student* head, int studentNumber);
 void modifyStudent(struct Student** head, int studentNumber);
 
-
-// Other function prototypes
+// Menu Functions
 int displayMenu();
 void titleInfo();
 void userLogin();
 void adminLogin();
+
+//For File Handling - Double check
+void saveStudentsToFile(struct Student* head);
+struct Student* loadStudentsFromFile();
 
 int main()
 {
@@ -64,7 +67,7 @@ int main()
         }
     } while (choice != 0);
 
-    printf("\n ----- Program has Terminated Successfully! ----- \n");
+    printf("----- Program has Terminated Successfully! ----- \n");
 
     return 0;
 }
@@ -93,6 +96,7 @@ void titleInfo()
     printf("\n========================================");
 }
 
+/*----- USER FUNCTIONALITIES -----*/
 void userLogin()
 {
     int studentNumber;
@@ -106,6 +110,7 @@ void userLogin()
     scanf("%d", &studentNumber);
 }
 
+/* ----- ADMIN FUNCTIONALITIES ----- */
 void adminLogin(struct Student** studentList)
 {
     char adminName[20];
