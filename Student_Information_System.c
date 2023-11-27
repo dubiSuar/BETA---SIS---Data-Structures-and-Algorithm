@@ -3,6 +3,7 @@
 #include <string.h>
 
 #define MAX_STRING_LENGTH 50
+#define FILENAME "student_data.txt"
 
 struct Student
 {
@@ -24,6 +25,7 @@ struct Student
 };
 
 // Functions input and output
+//-- admin functions --
 void addStudent(struct Student** head, int studentNumber);
 void displayStudents(struct Student* head);
 int authenticateAdmin(char* adminName, char* adminPass);
@@ -32,10 +34,14 @@ void displayStudentsInTable(struct Student* head);
 void searchStudent(struct Student* head, int studentNumber);
 void modifyStudent(struct Student** head, int studentNumber);
 
+//-- user functions --
+void displayStudentInfo(struct Student* student);
+
+
 // Menu Functions
 int displayMenu();
 void titleInfo();
-void userLogin();
+int userLogin(struct Student* head, int studentNumber);
 void adminLogin();
 
 //For File Handling - Double check
@@ -54,7 +60,26 @@ int main()
         switch (choice)
         {
         case 1:
-            userLogin();
+            {
+                int studentNumber;
+                printf("\n\t|----------------------|");
+                printf("\n\t|--- STUDENT LOGIN --- |");
+                printf("\n\t|------------------------|");
+                printf("\n\t| ENTER STUDENT NUMBER |");
+                printf("\n\t|----------------------|");
+                printf("\n ENTER: ");
+                scanf("%d", &studentNumber);
+
+                if (userLogin(studentList, studentNumber)) 
+                {
+                    // User login successful, perform desired actions for the user
+                    displayStudentInfo(studentList);
+                } 
+                else 
+                {
+                    printf("User login failed. Student not found.\n");
+                }
+            }
             break;
         case 2:
             adminLogin(&studentList);
@@ -97,17 +122,60 @@ void titleInfo()
 }
 
 /*----- USER FUNCTIONALITIES -----*/
-void userLogin()
+int userLogin(struct Student* head, int studentNumber)
 {
-    int studentNumber;
+    struct Student* currentUser = head;
 
-    printf("\n\t|----------------------|");
-    printf("\n\t|--- STUDENT LOGIN --- |");
-    printf("\n\t|------------------------|");
-    printf("\n\t| ENTER STUDENT NUMBER |");
-    printf("\n\t|----------------------|");
-    printf("\n ENTER: ");
-    scanf("%d", &studentNumber);
+    while (currentUser != NULL)
+    {
+        if (currentUser->StudentNumber == studentNumber)
+        {
+            printf("\n ================================================");
+            printf("\n Student login successful! Welcome, %s!\n", currentUser->firstName);
+            printf("\n ================================================");
+            return 1; // User login successful
+        }
+        currentUser = currentUser->next;
+    }
+
+    // no student found
+    return 0;
+}
+
+//display student information - user specific
+void displayStudentInfo(struct Student* student)
+{
+    if (student == NULL) {
+        printf("No student information available.\n");
+        return;
+    }
+
+    printf("\n=== STUDENT INFORMATION ===\n");
+    printf("| %-15s | %-30s | %-5s | %-5s | %-30s | %-30s |\n", "Student ID", "Name", "Age", "Grade", "Email", "Address");
+    printf("|-----------------|--------------------------------|-------|-------|--------------------------------|----------------------|\n");
+
+    while (student != NULL)
+    {
+        char fullName[150];
+        strcpy(fullName, student->firstName);
+        strcat(fullName, " ");
+        strcat(fullName, student->middleName);
+        strcat(fullName, " ");
+        strcat(fullName, student->lastName);
+
+        char emailBuffer[50];
+        strcpy(emailBuffer, student->email);
+
+        printf("| %-15d | %-30s | %-5d | %-5d | %-30s | %-30s \n",
+               student->StudentNumber,
+               fullName,
+               student->age,
+               student->grade,
+               emailBuffer,
+               student->address);
+
+        student = student->next;
+    }
 }
 
 /* ----- ADMIN FUNCTIONALITIES ----- */
@@ -323,26 +391,24 @@ void searchStudent(struct Student* head, int studentNumber)
 
 void displayStudentsInTable(struct Student* head)
 {
+    if (head == NULL) {
+        printf("No students in the list.\n");
+        return;
+    }
+
     printf("\n=== STUDENT LIST ===\n");
     printf("| %-15s | %-30s | %-5s | %-5s | %-30s | %-30s |\n", "Student ID", "Name", "Age", "Grade", "Email", "Address");
-    printf("|-----------------|--------------------------------|-------|-------|--------------------------------|--------------------------------|\n");
+    printf("|-----------------|--------------------------------|-------|-------|--------------------------------|----------------------|\n");
 
     while (head != NULL)
     {
-        /*
-        Temporary buffers for concatenation
-        */
         char fullName[150];
-        strcpy(fullName, head->firstName);
-        strcat(fullName, " ");
-        strcat(fullName, head->middleName);
-        strcat(fullName, " ");
-        strcat(fullName, head->lastName);
+        snprintf(fullName, sizeof(fullName), "%s %s %s", head->firstName, head->middleName, head->lastName);
 
         char emailBuffer[50];
-        strcpy(emailBuffer, head->email);
+        snprintf(emailBuffer, sizeof(emailBuffer), "%s", head->email);
 
-        printf("| %-15d | %-30s | %-5d | %-5d | %-30s | %-30s |\n",
+        printf("| %-15d | %-30s | %-5d | %-5d | %-30s | %-30s \n",
                head->StudentNumber,
                fullName,
                head->age,
@@ -354,7 +420,6 @@ void displayStudentsInTable(struct Student* head)
     }
 }
 
-//TO FIX: SKIPPING LINES
 void modifyStudent(struct Student** head, int studentNumber)
 {
     struct Student* current = *head;
@@ -448,4 +513,83 @@ int authenticateAdmin(char* adminName, char* adminPass)
     }
 
     return 0;
+}
+
+// Saving student information. Double check ayaw gumana minsan 
+void saveStudentsToFile(struct Student* head)
+{
+    FILE* file = fopen(FILENAME, "w");
+
+    if (file == NULL)
+    {
+        printf("Error opening file for writing.\n");
+        return;
+    }
+
+    while (head != NULL)
+    {
+        fprintf(file, "%d;%s;%s;%s;%d;%d;%s;%s;%s;%s;%s;%s;%s;%s;%s\n",
+                head->StudentNumber,
+                head->firstName,
+                head->middleName,
+                head->lastName,
+                head->age,
+                head->grade,
+                head->email,
+                head->birthDate,
+                head->sex,
+                head->course,
+                head->address,
+                head->barangay,
+                head->city,
+                head->streetNumber);
+
+        head = head->next;
+    }
+
+    fclose(file);
+}
+
+// Loading information sa file; file name: student_data.txt
+struct Student* loadStudentsFromFile()
+{
+    struct Student* head = NULL;
+    FILE* file = fopen(FILENAME, "r");
+
+    if (file == NULL)
+    {
+        printf("Error opening file for reading. Creating a new student list.\n");
+        return head;
+    }
+
+    while (1)
+    {
+        struct Student* newStudent = (struct Student*)malloc(sizeof(struct Student));
+
+        if (fscanf(file, "%d;%[^;];%[^;];%[^;];%d;%d;%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^\n]",
+                   &newStudent->StudentNumber,
+                   newStudent->firstName,
+                   newStudent->middleName,
+                   newStudent->lastName,
+                   &newStudent->age,
+                   &newStudent->grade,
+                   newStudent->email,
+                   newStudent->birthDate,
+                   newStudent->sex,
+                   newStudent->course,
+                   newStudent->address,
+                   newStudent->barangay,
+                   newStudent->city,
+                   newStudent->streetNumber) == EOF)
+        {
+            free(newStudent);
+            break;  // End of file
+        }
+
+        newStudent->next = head;
+        head = newStudent;
+    }
+
+    fclose(file);
+    return head;
 }
