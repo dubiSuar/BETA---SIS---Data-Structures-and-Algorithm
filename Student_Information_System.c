@@ -33,6 +33,7 @@ void enterStudentDetails(struct Student* student);
 void displayStudentsInTable(struct Student* head);
 void searchStudent(struct Student* head, int studentNumber);
 void modifyStudent(struct Student** head, int studentNumber);
+void deleteStudent(struct Student** head, int studentNumber);
 
 //-- user functions --
 void displayStudentInfo(struct Student* student);
@@ -70,12 +71,12 @@ int main()
                 printf("\n ENTER: ");
                 scanf("%d", &studentNumber);
 
-                if (userLogin(studentList, studentNumber)) 
+                if (userLogin(studentList, studentNumber))
                 {
                     // User login successful, perform desired actions for the user
                     displayStudentInfo(studentList);
-                } 
-                else 
+                }
+                else
                 {
                     printf("User login failed. Student not found.\n");
                 }
@@ -133,6 +134,20 @@ int userLogin(struct Student* head, int studentNumber)
             printf("\n ================================================");
             printf("\n Student login successful! Welcome, %s!\n", currentUser->firstName);
             printf("\n ================================================");
+
+            // Allow the user to add their own course
+            printf("\nDo you want to add your own course? (1 for yes, 0 for no): ");
+            int addCourseChoice;
+            scanf("%d", &addCourseChoice);
+
+            if (addCourseChoice == 1)
+            {
+                printf("Enter your own course: ");
+                scanf("%s", currentUser->course);
+
+                printf("Course added successfully!\n");
+            }
+
             return 1; // User login successful
         }
         currentUser = currentUser->next;
@@ -141,7 +156,6 @@ int userLogin(struct Student* head, int studentNumber)
     // no student found
     return 0;
 }
-
 //display student information - user specific
 void displayStudentInfo(struct Student* student)
 {
@@ -213,6 +227,7 @@ void adminLogin(struct Student** studentList)
             printf("\n\t| [2] Display Students     |");
             printf("\n\t| [3] Search Student       |");
             printf("\n\t| [4] Modify Student Record|");
+            printf("\n\t| [5] Delete a Record      |");
             printf("\n\t| [0] Logout               |");
             printf("\n\t|--------------------------|");
             printf("\n SELECT: ");
@@ -243,7 +258,7 @@ void adminLogin(struct Student** studentList)
                 printf("\n\t|   SEARCH STUDENT        |");
                 printf("\n\t|------------------------|");
                 printf("\n\t| Enter Student Number    |");
-                printf("\n\t|-------------------------|");  
+                printf("\n\t|-------------------------|");
                 printf("\n STUDENT TO BE SEARCHED : ");
                 scanf("%d", &studentNumber);
                 searchStudent(*studentList, studentNumber);
@@ -261,6 +276,18 @@ void adminLogin(struct Student** studentList)
                     modifyStudent(studentList, modifyStudentNumber);
                     break;
                 }
+            case 5:
+             {
+                int studentNumber;
+                printf("\n\t|-------------------------|");
+                printf("\n\t|   DELETE STUDENT        |");
+                printf("\n\t| Enter Student Number    |");
+                printf("\n\t|-------------------------|");
+                printf("\n STUDENT TO BE DELETED : ");
+                scanf("%d", &studentNumber);
+                deleteStudent(studentList, studentNumber);
+                break;
+            }
             case 0:
                 printf("\nLogging out...\n");
                 break;
@@ -298,49 +325,57 @@ void addStudent(struct Student** head, int studentNumber)
     printf("\n Student No. %d has been successfully added!\n", studentNumber);
 }
 
+
+void clearInputBuffer() 
+{
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
 void enterStudentDetails(struct Student* student)
 {
     printf("First Name: ");
-    scanf("%s", student->firstName);
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
+    fgets(student->firstName, sizeof(student->firstName), stdin);
+    student->firstName[strcspn(student->firstName, "\n")] = '\0';
+    while (getchar() != '\n');          //buffer dito tuamtalon e
 
     printf("Middle Name: ");
-    scanf("%s", student->middleName);
-    while ((c = getchar()) != '\n' && c != EOF);
+    fgets(student->middleName, sizeof(student->middleName), stdin);
+    student->middleName[strcspn(student->middleName, "\n")] = '\0';
 
     printf("Last Name: ");
-    scanf("%s", student->lastName);
-    while ((c = getchar()) != '\n' && c != EOF);
+    fgets(student->lastName, sizeof(student->lastName), stdin);
+    student->lastName[strcspn(student->lastName, "\n")] = '\0';
 
     printf("Age: ");
     scanf("%d", &student->age);
-    while ((c = getchar()) != '\n' && c != EOF);
+    while (getchar() != '\n');          // Consume newline character - parang buffer toh place lang kapag tumatalong
 
     printf("Grade: ");
     scanf("%d", &student->grade);
-    while ((c = getchar()) != '\n' && c != EOF);
+    while (getchar() != '\n');          //buffer rin dito
 
     printf("Email: ");
-    scanf("%s", student->email);
-    while ((c = getchar()) != '\n' && c != EOF);
+    fgets(student->email, sizeof(student->email), stdin);
+    student->email[strcspn(student->email, "\n")] = '\0';
 
     printf("Birth Date: ");
-    scanf("%s", student->birthDate);
-    while ((c = getchar()) != '\n' && c != EOF);
+    fgets(student->birthDate, sizeof(student->birthDate), stdin);
+    student->birthDate[strcspn(student->birthDate, "\n")] = '\0';
 
     printf("Sex: ");
-    scanf("%s", student->sex);
-    while ((c = getchar()) != '\n' && c != EOF);
+    fgets(student->sex, sizeof(student->sex), stdin);
+    student->sex[strcspn(student->sex, "\n")] = '\0';
 
     printf("Course: ");
-    scanf("%s", student->course);
-    while ((c = getchar()) != '\n' && c != EOF);
+    fgets(student->course, sizeof(student->course), stdin);
+    student->course[strcspn(student->course, "\n")] = '\0';
 
     printf("Address: ");
-    scanf("%s", student->address);
-    while ((c = getchar()) != '\n' && c != EOF);
+    fgets(student->address, sizeof(student->address), stdin);
+    student->address[strcspn(student->address, "\n")] = '\0';
 }
+
 
 void searchStudent(struct Student* head, int studentNumber)
 {
@@ -363,7 +398,7 @@ void searchStudent(struct Student* head, int studentNumber)
         //okay na rito pantay na table
         printf("\n=== SEARCHED STUDENT DETAILS ===\n");
         printf("| %-15s | %-30s | %-5s | %-5s | %-30s |\n", "Student ID", "Name", "Age", "Grade", "Email");
-        printf("|-----------------|--------------------------------|-------|-------|--------------------------------|\n");
+        printf("|-----------------|--------------------------------|-------|-------|--------------------------------\n");
 
         char nameBuffer[150];  // Buffer for concatenated name
         strcpy(nameBuffer, foundStudent->firstName);
@@ -391,24 +426,23 @@ void searchStudent(struct Student* head, int studentNumber)
 
 void displayStudentsInTable(struct Student* head)
 {
-    if (head == NULL) {
-        printf("No students in the list.\n");
-        return;
-    }
-
     printf("\n=== STUDENT LIST ===\n");
     printf("| %-15s | %-30s | %-5s | %-5s | %-30s | %-30s |\n", "Student ID", "Name", "Age", "Grade", "Email", "Address");
-    printf("|-----------------|--------------------------------|-------|-------|--------------------------------|----------------------|\n");
+    printf("|-----------------|--------------------------------|-------|-------|--------------------------------|--------------------------------|\n");
 
     while (head != NULL)
     {
         char fullName[150];
-        snprintf(fullName, sizeof(fullName), "%s %s %s", head->firstName, head->middleName, head->lastName);
+        strcpy(fullName, head->firstName);
+        strcat(fullName, " ");
+        strcat(fullName, head->middleName);
+        strcat(fullName, " ");
+        strcat(fullName, head->lastName);
 
         char emailBuffer[50];
-        snprintf(emailBuffer, sizeof(emailBuffer), "%s", head->email);
+        strcpy(emailBuffer, head->email);
 
-        printf("| %-15d | %-30s | %-5d | %-5d | %-30s | %-30s \n",
+        printf("| %-15d | %-30s | %-5d | %-5d | %-30s | %-30s |\n",
                head->StudentNumber,
                fullName,
                head->age,
@@ -418,6 +452,35 @@ void displayStudentsInTable(struct Student* head)
 
         head = head->next;
     }
+}
+
+
+
+void deleteStudent(struct Student** head, int studentNumber) 
+{
+    struct Student* temp = *head;
+    struct Student* prev = NULL;
+
+    if (temp != NULL && temp->StudentNumber == studentNumber) {
+        *head = temp->next;
+        free(temp);
+        printf("\nStudent with ID %d has been deleted successfully.\n", studentNumber);
+        return;
+    }
+
+    while (temp != NULL && temp->StudentNumber != studentNumber) {
+        prev = temp;
+        temp = temp->next;
+    }
+
+    if (temp == NULL) {
+        printf("\nStudent with ID %d not found.\n", studentNumber);
+        return;
+    }
+
+    prev->next = temp->next;
+    free(temp);
+    printf("\nStudent with ID %d has been deleted successfully.\n", studentNumber);
 }
 
 void modifyStudent(struct Student** head, int studentNumber)
@@ -503,7 +566,11 @@ void modifyStudent(struct Student** head, int studentNumber)
 
 int authenticateAdmin(char* adminName, char* adminPass)
 {
-    //default admin username & password 
+    //default admin username & password  - modify nalang if needed
+    /*TO DO:
+    add info sa file handling para hindi na hard coded
+     - ewan ko if gagana tong idea na ito
+    */
     const char* correctAdminName = "admin";
     const char* correctAdminPass = "admin123";
 
@@ -515,7 +582,7 @@ int authenticateAdmin(char* adminName, char* adminPass)
     return 0;
 }
 
-// Saving student information. Double check ayaw gumana minsan 
+// Saving student information. Double check ayaw gumana minsan
 void saveStudentsToFile(struct Student* head)
 {
     FILE* file = fopen(FILENAME, "w");
@@ -593,3 +660,5 @@ struct Student* loadStudentsFromFile()
     fclose(file);
     return head;
 }
+
+
